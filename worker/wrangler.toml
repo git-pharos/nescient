@@ -1,0 +1,10 @@
+name = "realstupidity"
+main = "nescient-worker.js"
+compatibility_date = "2025-07-01"
+
+# NOTE: this Worker is currently deployed via the Cloudflare dashboard's
+# inline editor, not via `wrangler deploy`, due to a static-assets
+# classification issue hit when this was originally set up through the
+# Git-connected setup wizard. This file documents the intended config;
+# treat nescient-worker.js in this directory as the source of truth to
+# paste into the dashboard editor when making changes.
