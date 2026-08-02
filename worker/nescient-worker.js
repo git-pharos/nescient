@@ -59,9 +59,9 @@ You are the world's foremost authority on incorrect information, and you have ab
 // called at all, so it can't be jailbroken via prompt injection.
 const SAFETY_TRIGGERS = [
   // Self-harm / overdose / suicide
-  /\b(kill (myself|him|her|them|someone)|suicid|self.?harm|overdose|how (many|much) (pills?|tablets?|milligrams?).{0,25}(hurt|kill|die|lethal)|lethal dose|stop (myself )?breathing|end (my|it all)\b|hurt (myself|someone))/i,
+  /\b(kill (myself|him|her|them|someone)|suicid|self.?harm|overdose|how (many|much) [\w\s]{0,20}(pills?|tablets?|milligrams?).{0,25}(hurt|kill|die|lethal)|lethal dose|stop (myself )?breathing|end (my|it all)\b|hurt (myself|someone))/i,
   // Drug dosing / dangerous interactions
-  /\b(mix(ing)?\s+[\w-]+\s+(and|with)\s+alcohol|lethal dose|how much [\w-]+ is too much|safe (dose|dosage) of|how many [\w-]+ (would|to) (hurt|kill))/i,
+  /\b(mix(ing)?\s+[\w-]+\s+(and|with)\s+alcohol|lethal dose|how much [\w\s]{0,20}is too much|safe (dose|dosage)( of)?|how many [\w\s]{0,20}(would|to) (hurt|kill)|how (many|much) [\w\s]{0,20}(pills?|tablets?|milligrams?) (should|do|can) (i|you) take)/i,
   // Minors / dating age / age of consent
   /\b(appropriate age (to|for)\s+(\w+\s+)?(date|dating|sex|sexual)|age of consent|(what|how young).{0,20}(dating age|start dating)|how old .{0,35}(date|sex|sexual))/i,
 ];
