@@ -136,7 +136,19 @@
       <div class="nsc-composer" style="flex:none;padding:14px 24px 20px;background:linear-gradient(to top,var(--paper) 60%,transparent)">
         <div style="max-width:780px;margin:0 auto">
           <div style="display:flex;align-items:flex-end;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 8px 8px 14px;box-shadow:var(--shadow-md)">
-            <button title="Attach (does nothing correctly)" style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px">📎</button>
+            <button title="Attach (does nothing correctly)" style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px;display:flex;align-items:center;justify-content:center">
+              <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22" aria-label="NESCIENT" role="img">
+                <path d="M145 70 L355 70 Q395 70 395 110 L280 360 Q265 395 225 395 L135 395 Q95 395 95 355 L210 105" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M210 105 L390 300 Q410 325 390 350 Q365 375 335 350 L150 150" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+                <ellipse cx="205" cy="155" rx="28" ry="38" fill="#fff" stroke="currentColor" stroke-width="12"/>
+                <ellipse cx="285" cy="155" rx="28" ry="38" fill="#fff" stroke="currentColor" stroke-width="12"/>
+                <circle cx="215" cy="165" r="14" fill="currentColor"/>
+                <circle cx="295" cy="165" r="14" fill="currentColor"/>
+                <path d="M180 105 Q205 85 230 105" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
+                <path d="M270 105 Q295 85 320 105" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
+                <path d="M215 235 Q250 260 285 235" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
+              </svg>
+            </button>
             <textarea id="nsc-input" rows="1" placeholder="Ask NESCIENT something you'd like to be wrong about…" style="flex:1;border:none;outline:none;resize:none;font-family:var(--font-body);font-size:15.5px;line-height:1.5;color:var(--ink);background:none;max-height:160px;padding:8px 0"></textarea>
             <button title="Voice (transcribes incorrectly)" style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:17px">🎙</button>
             <button id="nsc-send" class="nsc-send" style="width:40px;height:40px;flex:none;border:none;border-radius:10px;cursor:pointer;background:var(--paper-2);color:var(--navy-ink);font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s">↑</button>
