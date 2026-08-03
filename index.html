@@ -60,9 +60,9 @@
     }
 
     /* ---- Mascot idle animation + speech balloon ---- */
-    @keyframes nsc-mascot-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
-    .nsc-mascot-svg{ animation:nsc-mascot-bob 4.6s ease-in-out infinite; }
-    .nsc-eye{ transform-box:fill-box; transform-origin:50% 50%; transform:scaleY(1); transition:transform 90ms ease-in-out; }
+    @keyframes nsc-mascot-bob { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-5px) rotate(-4deg)} }
+    .nsc-mascot-svg{ animation:nsc-mascot-bob 2.8s ease-in-out infinite; transform-box:fill-box; transform-origin:50% 100%; }
+    .nsc-eye{ transform-box:fill-box; transform-origin:50% 50%; transform:scaleY(1); transition:transform 110ms ease-in-out; }
     .nsc-mascot-svg.nsc-blink .nsc-eye{ transform:scaleY(0.08); }
     @media (prefers-reduced-motion:reduce){
       .nsc-mascot-svg{ animation:none !important; }
@@ -167,7 +167,7 @@
           <div style="display:flex;align-items:flex-end;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 8px 8px 14px;box-shadow:var(--shadow-md)">
             <div style="position:relative;flex:none">
               <div id="nsc-idle-bubble" class="nsc-idle-bubble"></div>
-              <button id="nsc-mascot-btn" title="Attach (does nothing correctly)" style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px;display:flex;align-items:center;justify-content:center">
+              <button id="nsc-mascot-btn" title="Click me. I dare you." style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px;display:flex;align-items:center;justify-content:center">
                 <svg id="nsc-mascot-svg" class="nsc-mascot-svg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22" aria-label="NESCIENT" role="img">
                   <path d="M145 70 L355 70 Q395 70 395 110 L280 360 Q265 395 225 395 L135 395 Q95 395 95 355 L210 105" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M210 105 L390 300 Q410 325 390 350 Q365 375 335 350 L150 150" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
@@ -276,7 +276,7 @@
           setTimeout(() => {
             svg.classList.remove("nsc-blink");
             scheduleBlink();
-          }, 120);
+          }, 160);
         }, delay);
       };
       scheduleBlink();
