@@ -352,6 +352,20 @@
     const rand = (a) => a[Math.floor(Math.random() * a.length)];
     const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 
+    // ---- shorter placeholder on narrow phones ----
+    // The full placeholder wraps to 2 lines at <=560px and the composer
+    // doesn't grow to fit, so the wrapped line overlapped the disclaimer
+    // text below it. Swap to a shorter string instead of resizing anything.
+    (function initPlaceholder() {
+      const input = $("nsc-input");
+      if (!input) return;
+      const FULL = "Ask NESCIENT something you'd like to be wrong about…";
+      const SHORT = "Ask NESCIENT something…";
+      const update = () => { input.placeholder = window.innerWidth <= 560 ? SHORT : FULL; };
+      update();
+      window.addEventListener("resize", update);
+    })();
+
     let messages = [];
     let busy = false;
 
