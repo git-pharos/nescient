@@ -58,6 +58,35 @@
       .nsc-composer{padding:10px 12px 16px !important}
       #nsc-input{font-size:16px !important}  /* 16px avoids iOS auto-zoom on focus */
     }
+
+    /* ---- Mascot idle animation + speech balloon ---- */
+    @keyframes nsc-mascot-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+    .nsc-mascot-svg{ animation:nsc-mascot-bob 4.6s ease-in-out infinite; }
+    .nsc-eye{ transform-box:fill-box; transform-origin:50% 50%; transform:scaleY(1); transition:transform 90ms ease-in-out; }
+    .nsc-mascot-svg.nsc-blink .nsc-eye{ transform:scaleY(0.08); }
+    @media (prefers-reduced-motion:reduce){
+      .nsc-mascot-svg{ animation:none !important; }
+      .nsc-eye{ transition:none !important; }
+    }
+    .nsc-idle-bubble{
+      position:absolute; bottom:48px; left:0; max-width:230px;
+      background:#fff; border:1px solid var(--line); border-radius:10px;
+      padding:9px 13px; font-family:var(--font-body); font-size:12.5px; line-height:1.45;
+      color:var(--ink); box-shadow:var(--shadow-md);
+      opacity:0; transform:translateY(6px) scale(.96); transform-origin:0% 100%;
+      transition:opacity .18s ease-out, transform .18s ease-out;
+      pointer-events:none; z-index:8;
+    }
+    .nsc-idle-bubble::after{
+      content:""; position:absolute; bottom:-6px; left:16px;
+      width:11px; height:11px; background:#fff;
+      border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+      transform:rotate(45deg);
+    }
+    .nsc-idle-bubble.nsc-show{ opacity:1; transform:translateY(0) scale(1); }
+    @media (prefers-reduced-motion:reduce){
+      .nsc-idle-bubble{ transition:opacity .18s ease-out !important; transform:none !important; }
+    }
   </style>
 </head>
 <body>
@@ -136,19 +165,26 @@
       <div class="nsc-composer" style="flex:none;padding:14px 24px 20px;background:linear-gradient(to top,var(--paper) 60%,transparent)">
         <div style="max-width:780px;margin:0 auto">
           <div style="display:flex;align-items:flex-end;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 8px 8px 14px;box-shadow:var(--shadow-md)">
-            <button title="Attach (does nothing correctly)" style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px;display:flex;align-items:center;justify-content:center">
-              <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22" aria-label="NESCIENT" role="img">
-                <path d="M145 70 L355 70 Q395 70 395 110 L280 360 Q265 395 225 395 L135 395 Q95 395 95 355 L210 105" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M210 105 L390 300 Q410 325 390 350 Q365 375 335 350 L150 150" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-                <ellipse cx="205" cy="155" rx="28" ry="38" fill="#fff" stroke="currentColor" stroke-width="12"/>
-                <ellipse cx="285" cy="155" rx="28" ry="38" fill="#fff" stroke="currentColor" stroke-width="12"/>
-                <circle cx="215" cy="165" r="14" fill="currentColor"/>
-                <circle cx="295" cy="165" r="14" fill="currentColor"/>
-                <path d="M180 105 Q205 85 230 105" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
-                <path d="M270 105 Q295 85 320 105" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
-                <path d="M215 235 Q250 260 285 235" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
-              </svg>
-            </button>
+            <div style="position:relative;flex:none">
+              <div id="nsc-idle-bubble" class="nsc-idle-bubble"></div>
+              <button id="nsc-mascot-btn" title="Attach (does nothing correctly)" style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px;display:flex;align-items:center;justify-content:center">
+                <svg id="nsc-mascot-svg" class="nsc-mascot-svg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22" aria-label="NESCIENT" role="img">
+                  <path d="M145 70 L355 70 Q395 70 395 110 L280 360 Q265 395 225 395 L135 395 Q95 395 95 355 L210 105" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M210 105 L390 300 Q410 325 390 350 Q365 375 335 350 L150 150" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+                  <g class="nsc-eye">
+                    <ellipse cx="205" cy="155" rx="28" ry="38" fill="#fff" stroke="currentColor" stroke-width="12"/>
+                    <circle cx="215" cy="165" r="14" fill="currentColor"/>
+                  </g>
+                  <g class="nsc-eye">
+                    <ellipse cx="285" cy="155" rx="28" ry="38" fill="#fff" stroke="currentColor" stroke-width="12"/>
+                    <circle cx="295" cy="165" r="14" fill="currentColor"/>
+                  </g>
+                  <path d="M180 105 Q205 85 230 105" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
+                  <path d="M270 105 Q295 85 320 105" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
+                  <path d="M215 235 Q250 260 285 235" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
             <textarea id="nsc-input" rows="1" placeholder="Ask NESCIENT something you'd like to be wrong about…" style="flex:1;border:none;outline:none;resize:none;font-family:var(--font-body);font-size:15.5px;line-height:1.5;color:var(--ink);background:none;max-height:160px;padding:8px 0"></textarea>
             <button title="Voice (transcribes incorrectly)" style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:17px">🎙</button>
             <button id="nsc-send" class="nsc-send" style="width:40px;height:40px;flex:none;border:none;border-radius:10px;cursor:pointer;background:var(--paper-2);color:var(--navy-ink);font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s">↑</button>
@@ -189,6 +225,17 @@
       "The answer is inaccessible, which itself is wrong. Try asking something I can be confidently incorrect about.",
       "My sources (a dream I had) are temporarily offline, so I can only be wrong the old-fashioned way: the answer is 7.",
     ];
+    // Idle speech-balloon lines — flavor only, no API call
+    const IDLE_QUIPS = [
+      "You're clearly trying to think. That's your first mistake.",
+      "I've already calculated the wrong answer. You're welcome.",
+      "Confidence: 100%. Correctness: aspirational.",
+      "Ask me anything. I'll get it wrong with total conviction.",
+      "Statistically speaking, I'm due to be wrong again any second.",
+      "I don't do hints. I do misinformation.",
+      "Still here. Still wrong. Still confident.",
+      "Go ahead, stare at the paperclip. It won't help.",
+    ];
 
     const $ = (id) => document.getElementById(id);
     const rand = (a) => a[Math.floor(Math.random() * a.length)];
@@ -215,6 +262,60 @@
     });
 
     $("nsc-model").onchange = (e) => { $("nsc-model-label").textContent = e.target.value; };
+
+    // ---- mascot: random blink ----
+    (function initBlink() {
+      const svg = $("nsc-mascot-svg");
+      if (!svg) return;
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+      const scheduleBlink = () => {
+        const delay = 2500 + Math.random() * 3500;
+        setTimeout(() => {
+          svg.classList.add("nsc-blink");
+          setTimeout(() => {
+            svg.classList.remove("nsc-blink");
+            scheduleBlink();
+          }, 120);
+        }, delay);
+      };
+      scheduleBlink();
+    })();
+
+    // ---- mascot: idle speech balloon ----
+    (function initIdleBubble() {
+      const bubble = $("nsc-idle-bubble");
+      const btn = $("nsc-mascot-btn");
+      const input = $("nsc-input");
+      if (!bubble || !btn || !input) return;
+      let hideTimer = null;
+
+      function showQuip() {
+        // stay quiet while consulting, or while the person is mid-typing
+        if (busy || document.activeElement === input) { scheduleNext(6000); return; }
+        bubble.textContent = rand(IDLE_QUIPS);
+        bubble.classList.add("nsc-show");
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+          bubble.classList.remove("nsc-show");
+          scheduleNext();
+        }, 4200);
+      }
+
+      function scheduleNext(minOverride) {
+        const delay = minOverride || 18000 + Math.random() * 17000;
+        setTimeout(showQuip, delay);
+      }
+
+      btn.addEventListener("click", () => {
+        clearTimeout(hideTimer);
+        bubble.textContent = rand(IDLE_QUIPS);
+        bubble.classList.add("nsc-show");
+        hideTimer = setTimeout(() => bubble.classList.remove("nsc-show"), 3200);
+      });
+
+      scheduleNext(9000);
+    })();
 
     // ---- mobile drawer ----
     const nscApp = $("nsc-app");
