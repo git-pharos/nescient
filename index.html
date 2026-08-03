@@ -64,10 +64,6 @@
     .nsc-mascot-svg{ animation:nsc-mascot-bob 2.8s ease-in-out infinite; transform-box:fill-box; transform-origin:50% 100%; }
     .nsc-eye{ transform-box:fill-box; transform-origin:50% 50%; transform:scaleY(1); transition:transform 110ms ease-in-out; }
     .nsc-mascot-svg.nsc-blink .nsc-eye{ transform:scaleY(0.08); }
-    @media (prefers-reduced-motion:reduce){
-      .nsc-mascot-svg{ animation:none !important; }
-      .nsc-eye{ transition:none !important; }
-    }
     .nsc-idle-bubble{
       position:absolute; bottom:48px; left:0; max-width:230px;
       background:#fff; border:1px solid var(--line); border-radius:10px;
@@ -84,9 +80,6 @@
       transform:rotate(45deg);
     }
     .nsc-idle-bubble.nsc-show{ opacity:1; transform:translateY(0) scale(1); }
-    @media (prefers-reduced-motion:reduce){
-      .nsc-idle-bubble{ transition:opacity .18s ease-out !important; transform:none !important; }
-    }
   </style>
 </head>
 <body>
@@ -167,8 +160,8 @@
           <div style="display:flex;align-items:flex-end;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 8px 8px 14px;box-shadow:var(--shadow-md)">
             <div style="position:relative;flex:none">
               <div id="nsc-idle-bubble" class="nsc-idle-bubble"></div>
-              <button id="nsc-mascot-btn" title="Click me. I dare you." style="width:36px;height:36px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px;display:flex;align-items:center;justify-content:center">
-                <svg id="nsc-mascot-svg" class="nsc-mascot-svg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22" aria-label="NESCIENT" role="img">
+              <button id="nsc-mascot-btn" title="Click me. I dare you." style="width:44px;height:44px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:18px;display:flex;align-items:center;justify-content:center">
+                <svg id="nsc-mascot-svg" class="nsc-mascot-svg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" aria-label="NESCIENT" role="img">
                   <path d="M145 70 L355 70 Q395 70 395 110 L280 360 Q265 395 225 395 L135 395 Q95 395 95 355 L210 105" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M210 105 L390 300 Q410 325 390 350 Q365 375 335 350 L150 150" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
                   <g class="nsc-eye">
@@ -267,8 +260,6 @@
     (function initBlink() {
       const svg = $("nsc-mascot-svg");
       if (!svg) return;
-      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) return;
       const scheduleBlink = () => {
         const delay = 2500 + Math.random() * 3500;
         setTimeout(() => {
