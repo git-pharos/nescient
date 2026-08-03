@@ -105,6 +105,12 @@
     }
     .nsc-idle-bubble.nsc-show{ opacity:1; transform:translateY(0) scale(1); }
 
+    /* Mic bubble hangs off the mic button, which sits near the right
+       side of the composer — anchor it from the right edge instead of
+       the left so it doesn't overflow past the send button. */
+    .nsc-mic-bubble{ left:auto; right:0; transform-origin:100% 100%; }
+    .nsc-mic-bubble::after{ left:auto; right:14px; }
+
     /* ---- Prospect popup (Paths A / B / C — see script for trigger logic) ---- */
     .nsc-popup-overlay{
       position:fixed; inset:0; z-index:1000; display:none;
@@ -245,7 +251,10 @@
               </button>
             </div>
             <textarea id="nsc-input" rows="1" placeholder="Ask NESCIENT something you'd like to be wrong about…" style="flex:1;border:none;outline:none;resize:none;font-family:var(--font-body);font-size:15.5px;line-height:1.5;color:var(--ink);background:none;max-height:160px;padding:8px 0"></textarea>
-            <button class="nsc-mic-btn" title="Voice (transcribes incorrectly)" style="width:44px;height:44px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:21px;display:flex;align-items:center;justify-content:center">🎙</button>
+            <div style="position:relative;flex:none">
+              <div id="nsc-mic-bubble" class="nsc-idle-bubble nsc-mic-bubble"></div>
+              <button class="nsc-mic-btn" title="Voice (transcribes incorrectly)" style="width:44px;height:44px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:21px;display:flex;align-items:center;justify-content:center">🎙</button>
+            </div>
             <button id="nsc-send" class="nsc-send" aria-label="Send" style="width:40px;height:40px;flex:none;border:none;border-radius:10px;cursor:pointer;background:var(--paper-2);color:var(--navy-ink);font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s">↑</button>
           </div>
           <div style="text-align:center;font-family:var(--font-mono);font-size:10.5px;color:var(--muted-soft);margin-top:9px;line-height:1.6">NESCIENT 2.0 can make mistakes. That's the entire point. Wrong answers guaranteed or your money back*<br><span style="opacity:.8">*No money was exchanged. This disclaimer is also wrong.</span></div>
@@ -308,6 +317,21 @@
       "I don't do hints. I do misinformation.",
       "Still here. Still wrong. Still confident.",
       "Go ahead, stare at the paperclip. It won't help.",
+    ];
+    // Mic speech-balloon lines — the mic doesn't record anything, this
+    // is purely a joke button. Flavor only, no actual voice capture.
+    const MIC_QUIPS = [
+      "Is this on?",
+      "You're on mute!",
+      "Recording your silence, mostly.",
+      "Mic check. Still wrong.",
+      "I heard that. Ignoring it anyway.",
+      "Transcribing that as 'banana.'",
+      "Bold of you to assume I'm listening.",
+      "Volume's fine. My hearing isn't.",
+      "That was definitely a word.",
+      "Please speak directly into the void.",
+      "Voice input disabled. Wisely.",
     ];
 
     // ── Prospect popup: content + trigger config ──────────────────
@@ -501,6 +525,21 @@
       });
 
       scheduleNext(9000);
+    })();
+
+    // ---- mic: click-to-quip speech balloon (decorative — mic doesn't record) ----
+    (function initMicBubble() {
+      const bubble = $("nsc-mic-bubble");
+      const btn = document.querySelector(".nsc-mic-btn");
+      if (!bubble || !btn) return;
+      let hideTimer = null;
+
+      btn.addEventListener("click", () => {
+        clearTimeout(hideTimer);
+        bubble.textContent = rand(MIC_QUIPS);
+        bubble.classList.add("nsc-show");
+        hideTimer = setTimeout(() => bubble.classList.remove("nsc-show"), 3200);
+      });
     })();
 
     // ---- mobile drawer ----
