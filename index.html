@@ -354,7 +354,7 @@
 
     // Called once per completed answer — this is the popup's only hook
     // into the existing chat flow (see submit(), below).
-    const POST_ANSWER_DELAY_MS = 3000; // grace period so Path A doesn't cover the 2nd answer before it's been read
+    const POST_ANSWER_DELAY_MS = 6000; // grace period so Path A doesn't cover the 2nd answer before it's been read
 
     function registerAnswer() {
       if (popupShown) return;
