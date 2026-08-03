@@ -80,6 +80,47 @@
       transform:rotate(45deg);
     }
     .nsc-idle-bubble.nsc-show{ opacity:1; transform:translateY(0) scale(1); }
+
+    /* ---- Prospect popup (Paths A / B / C — see script for trigger logic) ---- */
+    .nsc-popup-overlay{
+      position:fixed; inset:0; z-index:1000; display:none;
+      align-items:center; justify-content:center; padding:20px;
+      background:rgba(0,20,40,.55);
+      animation:nsc-popup-fade .2s ease forwards;
+    }
+    .nsc-popup-overlay.nsc-popup-show{ display:flex; }
+    @keyframes nsc-popup-fade{ from{opacity:0} to{opacity:1} }
+    @keyframes nsc-popup-rise{ from{opacity:0;transform:translateY(14px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
+    .nsc-popup-card{
+      width:100%; max-width:440px; background:#fff; border-radius:var(--r-lg,14px);
+      border-top:3px solid var(--sky); box-shadow:var(--shadow-md);
+      padding:30px 30px 26px; position:relative;
+      animation:nsc-popup-rise .3s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .nsc-popup-close{
+      position:absolute; top:14px; right:14px; width:28px; height:28px;
+      border:none; background:none; cursor:pointer; font-size:16px;
+      color:var(--muted-soft); line-height:1;
+    }
+    .nsc-popup-close:hover{ color:var(--muted); }
+    .nsc-popup-eyebrow{
+      font-family:var(--font-mono); font-size:10px; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--sky); margin-bottom:12px;
+    }
+    .nsc-popup-headline{
+      font-family:var(--font-head); font-weight:800; font-size:21px;
+      color:var(--navy); margin-bottom:13px; line-height:1.3;
+    }
+    .nsc-popup-body p{
+      font-size:14px; line-height:1.65; color:var(--muted); margin:0 0 12px;
+    }
+    .nsc-popup-body p:last-child{ margin-bottom:20px; }
+    .nsc-popup-cta{
+      display:inline-block; background:var(--sky); color:var(--navy-ink,#00264d);
+      text-decoration:none; font-weight:700; font-size:13px; letter-spacing:.02em;
+      border-radius:var(--r-md,8px); padding:12px 20px; transition:background .15s, transform .15s;
+    }
+    .nsc-popup-cta:hover{ background:var(--sky-bright); transform:translateY(-1px); }
   </style>
 </head>
 <body>
@@ -186,6 +227,17 @@
         </div>
       </div>
     </main>
+
+    <!-- ============ PROSPECT POPUP (Paths A / B / C) ============ -->
+    <div class="nsc-popup-overlay" id="nsc-popup-overlay">
+      <div class="nsc-popup-card" id="nsc-popup-card">
+        <button class="nsc-popup-close" id="nsc-popup-close" aria-label="Close">✕</button>
+        <div class="nsc-popup-eyebrow" id="nsc-popup-eyebrow"></div>
+        <div class="nsc-popup-headline" id="nsc-popup-headline"></div>
+        <div class="nsc-popup-body" id="nsc-popup-body"></div>
+        <a class="nsc-popup-cta" id="nsc-popup-cta" href="#">See how AI governance actually works →</a>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -230,12 +282,106 @@
       "Go ahead, stare at the paperclip. It won't help.",
     ];
 
+    // ── Prospect popup: content + trigger config ──────────────────
+    // Path C (zero-question exit-intent / tab-away) is the most
+    // debatable of the three UX-wise. Flip this to false to disable
+    // it without touching Path A/B logic, or delete the block marked
+    // below to remove it outright.
+    const ENABLE_EXIT_INTENT_POPUP = true;
+    const IDLE_TIMEOUT_MS = 15000; // Path B: fires 15s after the 1st answer if the visitor goes quiet
+    const PHAROS_URL = "https://pharosgrpllc.com/ai-governance"; // popup CTA — the booking link lives on THIS page, not here
+
+    const POPUP_CONTENT = {
+      A: {
+        eyebrow: "A note from Pharos Group",
+        headline: "Notice something?",
+        body: [
+          `NESCIENT just gave you two answers. Both wrong. Both stated with total confidence — no hedging, no "I think," nothing to signal the difference between right and glorious nonsense.`,
+          `That's the whole joke. It's also the whole point. A lot of AI tools sound exactly this sure of themselves whether they're right or not — and unlike NESCIENT, they're not labeled "wrong answers guaranteed." The difference between a fun toy and a real liability is whether anyone's checking, and what happens when nobody is.`,
+          `Pharos Group helps organizations figure out where AI can be trusted, where it can't, and what has to sit in between.`,
+        ],
+      },
+      B: {
+        eyebrow: "A note from Pharos Group",
+        headline: "Notice something?",
+        body: [
+          `NESCIENT just gave you an answer — completely wrong, completely confident. No hedging, no "I think." That's the bit.`,
+          `It's also the point. Plenty of AI tools sound exactly this sure of themselves whether they're right or not, and most of them aren't labeled "wrong answers guaranteed." The gap between a fun toy and a real liability is whether anyone's checking.`,
+          `Pharos Group helps organizations figure out where AI can be trusted, where it can't, and what has to sit in between.`,
+        ],
+      },
+      C: {
+        eyebrow: "A note from Pharos Group",
+        headline: "Before you go —",
+        body: [
+          `NESCIENT's entire job is to answer questions confidently and get them completely wrong. It's a joke. What's not a joke: plenty of AI tools sound exactly that certain and aren't telling you when they're wrong.`,
+          `Pharos Group helps organizations figure out where AI can be trusted, where it can't, and what has to sit in between.`,
+        ],
+      },
+    };
+
     const $ = (id) => document.getElementById(id);
     const rand = (a) => a[Math.floor(Math.random() * a.length)];
     const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 
     let messages = [];
     let busy = false;
+
+    // ---- popup state ----
+    let answerCount = 0;
+    let popupShown = false;
+    let idleTimer = null;
+
+    function showPopup(variant) {
+      if (popupShown) return;
+      popupShown = true;
+      clearTimeout(idleTimer);
+      const c = POPUP_CONTENT[variant];
+      $("nsc-popup-eyebrow").textContent = c.eyebrow;
+      $("nsc-popup-headline").textContent = c.headline;
+      $("nsc-popup-body").innerHTML = c.body.map((p) => "<p>" + esc(p) + "</p>").join("");
+      $("nsc-popup-cta").href = PHAROS_URL;
+      $("nsc-popup-overlay").classList.add("nsc-popup-show");
+    }
+    function hidePopup() {
+      $("nsc-popup-overlay").classList.remove("nsc-popup-show");
+      // popupShown stays true — never fires again this visit
+    }
+    $("nsc-popup-close").onclick = hidePopup;
+    $("nsc-popup-overlay").addEventListener("click", (e) => {
+      if (e.target === $("nsc-popup-overlay")) hidePopup();
+    });
+
+    // Called once per completed answer — this is the popup's only hook
+    // into the existing chat flow (see submit(), below).
+    function registerAnswer() {
+      if (popupShown) return;
+      answerCount++;
+      if (answerCount >= 2) {
+        showPopup("A");
+      } else if (answerCount === 1) {
+        armIdleTimer();
+      }
+    }
+    function armIdleTimer() {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => showPopup("B"), IDLE_TIMEOUT_MS);
+    }
+
+    // Path C: desktop exit-intent + mobile visibility fallback, only
+    // while the visitor hasn't asked anything yet. Everything in this
+    // block is gated by ENABLE_EXIT_INTENT_POPUP — delete the block
+    // instead if you want Path C gone for good rather than toggled.
+    if (ENABLE_EXIT_INTENT_POPUP) {
+      document.addEventListener("mouseleave", (e) => {
+        if (popupShown || answerCount > 0) return;
+        if (e.clientY <= 0) showPopup("C");
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (popupShown || answerCount > 0) return;
+        if (document.visibilityState === "hidden") showPopup("C");
+      });
+    }
 
     // ---- sidebar / suggestions ----
     HISTORY.forEach((h) => {
@@ -321,6 +467,11 @@
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); }
     });
     $("nsc-input").addEventListener("input", updateSend);
+    // Path B resets its idle clock on any typing, so a visitor mid-way
+    // through a 2nd question doesn't get interrupted.
+    $("nsc-input").addEventListener("input", () => {
+      if (!popupShown && answerCount === 1) armIdleTimer();
+    });
 
     function autosize() {
       const t = $("nsc-input");
@@ -342,6 +493,7 @@
       $("nsc-input").value = "";
       autosize(); updateSend(); render();
       await consult(q);
+      registerAnswer();
     }
 
     async function consult(question) {
