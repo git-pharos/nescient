@@ -354,11 +354,13 @@
 
     // Called once per completed answer — this is the popup's only hook
     // into the existing chat flow (see submit(), below).
+    const POST_ANSWER_DELAY_MS = 3000; // grace period so Path A doesn't cover the 2nd answer before it's been read
+
     function registerAnswer() {
       if (popupShown) return;
       answerCount++;
       if (answerCount >= 2) {
-        showPopup("A");
+        setTimeout(() => { if (!popupShown) showPopup("A"); }, POST_ANSWER_DELAY_MS);
       } else if (answerCount === 1) {
         armIdleTimer();
       }
@@ -372,10 +374,15 @@
     // while the visitor hasn't asked anything yet. Everything in this
     // block is gated by ENABLE_EXIT_INTENT_POPUP — delete the block
     // instead if you want Path C gone for good rather than toggled.
+    //
+    // Uses mouseout + a null relatedTarget rather than document
+    // mouseleave — mouseleave on document is inconsistent across
+    // browsers for detecting "cursor left the viewport entirely,"
+    // which is the standard exit-intent trick's actual failure mode.
     if (ENABLE_EXIT_INTENT_POPUP) {
-      document.addEventListener("mouseleave", (e) => {
+      document.addEventListener("mouseout", (e) => {
         if (popupShown || answerCount > 0) return;
-        if (e.clientY <= 0) showPopup("C");
+        if (!e.relatedTarget && e.clientY <= 10) showPopup("C");
       });
       document.addEventListener("visibilitychange", () => {
         if (popupShown || answerCount > 0) return;
