@@ -111,6 +111,11 @@
     .nsc-mic-bubble{ left:auto; right:0; transform-origin:100% 100%; }
     .nsc-mic-bubble::after{ left:auto; right:14px; }
 
+    /* Mic button: explicitly no idle/hover animation (unlike the
+       paperclip mascot, which bobs continuously) — it should sit still
+       until clicked. */
+    .nsc-mic-btn{ animation:none; }
+
     /* ---- Prospect popup (Paths A / B / C — see script for trigger logic) ---- */
     .nsc-popup-overlay{
       position:fixed; inset:0; z-index:1000; display:none;
@@ -253,7 +258,7 @@
             <textarea id="nsc-input" rows="1" placeholder="Ask NESCIENT something you'd like to be wrong about…" style="flex:1;border:none;outline:none;resize:none;font-family:var(--font-body);font-size:15.5px;line-height:1.5;color:var(--ink);background:none;max-height:160px;padding:8px 0"></textarea>
             <div style="position:relative;flex:none">
               <div id="nsc-mic-bubble" class="nsc-idle-bubble nsc-mic-bubble"></div>
-              <button class="nsc-mic-btn" title="Voice (transcribes incorrectly)" style="width:44px;height:44px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:21px;display:flex;align-items:center;justify-content:center">🎙</button>
+              <button class="nsc-mic-btn" title="Voice (transcribes incorrectly)" style="width:55px;height:55px;flex:none;border:none;background:none;cursor:pointer;color:var(--muted-soft);font-size:26px;display:flex;align-items:center;justify-content:center">🎙</button>
             </div>
             <button id="nsc-send" class="nsc-send" aria-label="Send" style="width:40px;height:40px;flex:none;border:none;border-radius:10px;cursor:pointer;background:var(--paper-2);color:var(--navy-ink);font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s">↑</button>
           </div>
