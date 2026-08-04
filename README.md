@@ -1,4 +1,4 @@
-<![CDATA[# NESCIENT / Real Stupidity
+# NESCIENT / Real Stupidity
 
 Parody AI web app for Pharos Group LLC — gives confidently wrong, sarcastically
 berating answers. Styled as a modern "AI assistant," but every answer is
@@ -45,4 +45,3 @@ paths ever change, update the references in `nescient.html`.
 The Cloudflare Transform Rule enforcing CSP on `nescient.pharosgrpllc.com`
 needs `connect-src` to allow `realstupidity.rapid-recipe-413b.workers.dev`.
 This is a separate Transform Rule from the one covering the main site.
-]]>
