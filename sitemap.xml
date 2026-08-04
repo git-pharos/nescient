@@ -1,9 +1,10 @@
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
-  &lt;url&gt;
-    &lt;loc&gt;https://nescient.pharosgrpllc.com/&lt;/loc&gt;
-    &lt;lastmod&gt;2026-08-04&lt;/lastmod&gt;
-    &lt;changefreq&gt;monthly&lt;/changefreq&gt;
-    &lt;priority&gt;1.0&lt;/priority&gt;
-  &lt;/url&gt;
-&lt;/urlset&gt;
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://nescient.pharosgrpllc.com/</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
