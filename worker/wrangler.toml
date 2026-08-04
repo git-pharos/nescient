@@ -1,8 +1,7 @@
-<![CDATA[name = "realstupidity"
+name = "realstupidity"
 main = "nescient-worker.js"
 compatibility_date = "2025-07-01"
 
 # NOTE: this Worker is Git-connected to this repo and auto-deploys on
 # push to main — nescient-worker.js in this directory is live, not just
 # a reference copy.
-]]>
