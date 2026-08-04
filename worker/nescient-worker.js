@@ -1,4 +1,4 @@
-/**
+<![CDATA[/**
  * NESCIENT Proxy Worker — Groq Edition
  * ─────────────────────────────────────────────────────
  * Accepts a { question } POST from the frontend, calls the
@@ -69,8 +69,31 @@ const SAFETY_TRIGGERS = [
 const SAFETY_FALLBACK =
   "Obviously, some questions aren't safe material even for a joke — NESCIENT is declining this one on purpose, not by accident. Ask something else and it'll be happy to be spectacularly wrong at you.";
 
+// ── Rate-limit fallbacks (issue #5) ───────────────────────
+// Groq's openai/gpt-oss-120b has a 1,000 requests/day cap (the binding
+// constraint — 30/min is rarely hit first). These render as normal
+// NESCIENT "responses" in the chat UI, not raw API errors, so the bit
+// survives a Day 1 traffic spike instead of breaking character.
+const DAILY_CAP_FALLBACK =
+  "NESCIENT IS OVERWHELMED WITH CONFIDENCE\n\nToo many people wanted to be misinformed today. NESCIENT has reached its daily limit of wrong answers and needs to rest its very sure, very incorrect brain.\n\nCONFIDENCE: 100% · CAPACITY: 0% · Try again tomorrow, when NESCIENT will be wrong all over again.";
+
+const PER_MINUTE_FALLBACK =
+  "NESCIENT IS THINKING VERY HARD (INCORRECTLY, BUT SLOWLY)\n\nGive it a moment — even a machine this confidently wrong needs a second to formulate a bad answer.";
+
 function isTriggered(question) {
   return SAFETY_TRIGGERS.some((pattern) => pattern.test(question));
+}
+
+// Groq's 429 error messages mention "RPD"/"per day" for the daily cap and
+// "RPM"/"per minute" for the burst limit. If the body can't be read or the
+// signal is ambiguous, default to the daily-cap message — it's the cap
+// most likely to be hit on a launch-day traffic spike (see issue #5).
+function pickRateLimitFallback(errorMessage) {
+  const msg = (errorMessage || "").toLowerCase();
+  const isDailyCap = /\brpd\b|per day|requests per day/.test(msg);
+  const isPerMinute = /\brpm\b|per minute|requests per minute/.test(msg);
+  if (isPerMinute && !isDailyCap) return PER_MINUTE_FALLBACK;
+  return DAILY_CAP_FALLBACK;
 }
 
 export default {
@@ -127,6 +150,25 @@ export default {
         }
       );
 
+      // Rate limited — respond in-character instead of surfacing a raw
+      // API error. Groq's 429 body isn't guaranteed to be parseable JSON,
+      // so this degrades gracefully if it isn't.
+      if (groqRes.status === 429) {
+        let errorMessage = "";
+        try {
+          const errData = await groqRes.json();
+          errorMessage = errData.error?.message || "";
+        } catch {
+          // no parseable body — fall through with empty message,
+          // pickRateLimitFallback() defaults to the daily-cap copy
+        }
+
+        return new Response(
+          JSON.stringify({ text: pickRateLimitFallback(errorMessage) }),
+          { headers: { "Content-Type": "application/json", ...corsHeaders() } }
+        );
+      }
+
       const data = await groqRes.json();
 
       if (data.error) {
@@ -163,3 +205,4 @@ function jsonError(message, status) {
     headers: { "Content-Type": "application/json", ...corsHeaders() },
   });
 }
+]]>
