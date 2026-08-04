@@ -1,4 +1,4 @@
-<![CDATA[/**
+/**
  * NESCIENT Proxy Worker — Groq Edition
  * ─────────────────────────────────────────────────────
  * Accepts a { question } POST from the frontend, calls the
@@ -203,4 +203,3 @@ function jsonError(message, status) {
     headers: { "Content-Type": "application/json", ...corsHeaders() },
   });
 }
-]]>
