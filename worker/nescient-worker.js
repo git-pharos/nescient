@@ -13,12 +13,10 @@
  *   const ALLOWED_ORIGIN = "https://yourdomain.com";
  * ─────────────────────────────────────────────────────
  *
- * DEPLOY: this Worker is deployed via `wrangler deploy` from
- * this directory (worker/). It is NOT Git-connected — do not
- * reconnect it to Cloudflare's Git integration; that has twice
- * caused this Worker to be misclassified as a static-assets
- * Worker, breaking secrets and the API entirely. See
- * git-pharos/nescient README for details.
+ * DEPLOY: this Worker is Git-connected to this repo. Pushing changes
+ * to worker/nescient-worker.js on `main` triggers an automatic
+ * Cloudflare deploy — no manual wrangler/dashboard step needed.
+ * See git-pharos/nescient README for details.
  */
 
 const ALLOWED_ORIGIN = "*";
