@@ -1,4 +1,4 @@
-# NESCIENT / Real Stupidity
+<![CDATA[# NESCIENT / Real Stupidity
 
 Parody AI web app for Pharos Group LLC — gives confidently wrong, sarcastically
 berating answers. Styled as a modern "AI assistant," but every answer is
@@ -17,8 +17,8 @@ Browser
                                   brand assets, not duplicated here)
       → Worker fetch()
   → realstupidity.rapid-recipe-413b.workers.dev  (Cloudflare Worker,
-                               deployed separately, NOT via this repo's
-                               wrangler.toml — see worker/wrangler.toml)
+                               Git-connected to this repo — see
+                               worker/wrangler.toml)
       → Groq API (llama/gpt-oss model, GROQ_API_KEY secret)
 ```
 
@@ -28,10 +28,9 @@ Browser
   (`nescient`) with a custom domain of `nescient.pharosgrpllc.com`.
   Push to `main` and Cloudflare auto-deploys — no build step, static
   assets served from repo root.
-- **Worker**: NOT deployed from this repo. It's deployed via the
-  Cloudflare dashboard's inline editor. `worker/nescient-worker.js` is
-  kept here as the source of truth — copy/paste into the dashboard
-  editor when making changes, then redeploy from there.
+- **Worker**: also Git-connected to this repo. Push changes to
+  `worker/nescient-worker.js` on `main` and Cloudflare auto-deploys the
+  `realstupidity` Worker — no manual wrangler or dashboard step needed.
 
 ## Shared brand assets
 
@@ -46,3 +45,4 @@ paths ever change, update the references in `nescient.html`.
 The Cloudflare Transform Rule enforcing CSP on `nescient.pharosgrpllc.com`
 needs `connect-src` to allow `realstupidity.rapid-recipe-413b.workers.dev`.
 This is a separate Transform Rule from the one covering the main site.
+]]>
