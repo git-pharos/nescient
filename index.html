@@ -450,7 +450,7 @@
     // below to remove it outright.
     const ENABLE_EXIT_INTENT_POPUP = true;
     const IDLE_TIMEOUT_MS = 15000; // Path B: fires 15s after the 1st answer if the visitor goes quiet
-    const PHAROS_URL = "https://pharosgrpllc.com/ai-governance"; // popup CTA — the booking link lives on THIS page, not here
+    const PHAROS_URL = "https://pharosgrpllc.com/ai-governance" + window.location.search; // popup CTA — forwards this page's query string (UTM tags, etc.) so campaign attribution survives the click-through to the main site
 
     const POPUP_CONTENT = {
       A: {
